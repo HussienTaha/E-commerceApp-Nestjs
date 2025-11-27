@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from "@nestjs/common";
+import {  UserRepo } from "src/DB";
 
 
 
@@ -7,12 +8,14 @@ export class AppError extends HttpException {
         super(message, status!) ;
     }
 }
+// @InjectModel(User.name) private  userModel: Model<User>
 @Injectable()
 export class UserService {
-    constructor() {}
-    getUsers( Body: object) {
-        return{body:Body};
-        // throw new AppError("User not found",404);
+    constructor( private readonly userRepo:UserRepo) {}
+   async addUsers( Body: object) {
+    const user = await this.userRepo.create(Body);
+    return user
+
 
     }
 }

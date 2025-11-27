@@ -1,4 +1,5 @@
-import { Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
+import { MongooseModule, Prop, Schema, SchemaFactory, Virtual } from "@nestjs/mongoose";
+import { HydratedDocument } from "mongoose";
 import { USER_GENDER, USER_PROVIDER, USER_ROLE } from "src/common/enum";
 
 
@@ -47,3 +48,5 @@ export class User {
 
 
  export const UserSchema = SchemaFactory.createForClass(User);
+ export type HUserDocument = HydratedDocument<User>
+  export const UserModel =  MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])
