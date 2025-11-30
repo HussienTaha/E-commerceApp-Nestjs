@@ -6,10 +6,13 @@ import { userModule } from './module/user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: 'config/.env',
+      isGlobal: true,
     }),
     userModule,
     MongooseModule.forRoot(process.env.MONGO_URL as string, {

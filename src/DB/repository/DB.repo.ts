@@ -13,9 +13,26 @@ import { HydratedDocument, ProjectionType, QueryOptions, RootFilterQuery, Update
     select?: ProjectionType<TDocument>,
     options?: QueryOptions<TDocument>
   ): Promise<HydratedDocument<TDocument> | null> {
-    return this.model.findOne(filter, select, options);
+    return this.model.findOne(filter, select, options).populate(options?.populate as any);
   }
-  
+
+async findOneQ(
+  filter: RootFilterQuery<TDocument>,
+  select?: ProjectionType<TDocument>,
+  options?: QueryOptions<TDocument>
+) {
+  let query = this.model.findOne(filter, select, options);
+
+  if (options?.populate) {
+    query = query.populate(options.populate as any);
+  }
+
+  return query;
+}
+
+
+
+
 
   async find(
   filter: RootFilterQuery<TDocument>,

@@ -2,12 +2,13 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './DTO/user.dto';
+import { confermEmailDto, loginDto, resedOtpDto, signupDto } from './DTO/user.dto';
 
 @Controller('users')
 @UsePipes(
@@ -20,13 +21,22 @@ import { UserDto } from './DTO/user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
   //  new ZodValidationPipe(userValidation) دي لو هنستخدم zod بتكون كده علي الكونترولر
-  @Post('/add')
-  addUsers(@Body() Body: UserDto) {
-    return this.userService.addUsers(Body);
+  @Post('/signup')
+  signup(@Body() Body: signupDto) {
+    return this.userService.signup(Body);
+  }
+  @Post('/resedOtp')
+  resedOtp(@Body() Body: resedOtpDto) {
+    return this.userService.resedOtp(Body);
+  }
+ @Patch('/confermEmail')
+  confermEmail(@Body() Body: confermEmailDto) {
+    return this.userService.confermEmail(Body);
   }
 
-  @Get('/all')
-  getAllUsers() {
-    return this.userService.getAllUsers();
+   @Post('/login')
+  login(@Body() Body: loginDto) {
+    return this.userService.login(Body);
   }
+
 }
