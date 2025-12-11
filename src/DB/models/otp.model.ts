@@ -27,7 +27,7 @@ OtpSchema.pre(
     this: HOtpDocument & { is_new: boolean; plainCode: string },
     next,
   ) { 
-     console.log({this:this});
+    //  console.log({this:this});
     if (this.isModified('code')) {
      this.plainCode = this.code;
       this.is_new = this.isNew;

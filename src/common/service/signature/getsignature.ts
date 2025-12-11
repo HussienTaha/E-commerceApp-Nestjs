@@ -1,6 +1,7 @@
-import { App } from 'supertest/types';
+
 import { USER_ROLE } from "src/common/enum";
-import { AppError } from 'src/module/user/user.service';
+import { AppError } from '../errorhanseling';
+
 
 export const getRoleAccessSignature = (role: USER_ROLE): string => {
   switch (role) {

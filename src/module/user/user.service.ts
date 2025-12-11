@@ -18,12 +18,9 @@ import {
 
 } from 'src/common/service/signature';
 import { comparePassword } from 'src/common/utils/hash';
+import { AppError } from 'src/common/service/errorhanseling';
 
-export class AppError extends HttpException {
-  constructor(message: string, status?: number) {
-    super(message, status!);
-  }
-}
+
 // @InjectModel(User.name) private  userModel: Model<User>
 @Injectable()
 export class UserService {
@@ -112,7 +109,7 @@ export class UserService {
     );
     await this.otpRepo.deleteone({ createdBy: user._id });
 
-    return { message: 'Email confermed successfully' };
+    return { message: 'Email confermed successfully 👌😊' };
   }
 
   async login(Body: loginDto) {

@@ -4,11 +4,13 @@ import {
   Get,
   Patch,
   Post,
+  Request,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { confermEmailDto, loginDto, resedOtpDto, signupDto } from './DTO/user.dto';
+import  type{ userRequst } from 'src/common/interfaces';
 
 @Controller('users')
 @UsePipes(
@@ -37,6 +39,13 @@ export class UserController {
    @Post('/login')
   login(@Body() Body: loginDto) {
     return this.userService.login(Body);
+  }
+
+   @Get('/profile')
+  profile( @Request() req: userRequst) {
+
+    return({message:"profile",user:req.user})
+    // return this.userService.profile();
   }
 
 }

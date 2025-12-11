@@ -2,7 +2,8 @@
 
 import nodemailer from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
-import { AppError } from 'src/module/user/user.service';
+import { AppError } from "../errorhanseling";
+
 
 export const sendEmail = async (mailOptions: Mail.Options) => {
   try {

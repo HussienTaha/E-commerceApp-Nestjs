@@ -88,7 +88,7 @@ export const UserModel = MongooseModule.forFeatureAsync([
  
       UserSchema.pre('save', function (next) {
         if (!this.userName) {
-          this.userName = `${this.fName}${this.lName}`.replace(/\s+/g, '').toLowerCase();
+          this.userName = `${this.fName}${this.lName}`.replace(/\s+/g, ' ').toLowerCase();
         }
         next();
       });
