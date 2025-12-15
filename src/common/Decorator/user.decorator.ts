@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
-
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 @ValidatorConstraint({ name: 'customText', async: false })
 export class matchFeilds implements ValidatorConstraintInterface {
   validate(text: string, args: ValidationArguments) {
@@ -26,3 +26,14 @@ export function IsMatch(constraints:string[],validationOptions?: ValidationOptio
     
   };
 }
+
+
+
+
+
+export const User = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.user;
+  },
+);

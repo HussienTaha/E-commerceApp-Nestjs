@@ -67,7 +67,8 @@ export class TokenService {
   decodedTokenAndfitchUser = async (token: string, signature: string) => {
     //  هنا عاوز يضري err عشان بعمل decoded.email  ف هنا عملت اسه بص  decoded as JwtPayload
     //  طلع الغلط يا معلم ان انا مش  عالم await علي ال verig
-    const decoded = await verifyToken({ token, signature });
+    try {
+      const decoded = await verifyToken({ token, signature });
     if (!decoded) {
       throw new AppError('Invalid token', 401);
     }
@@ -94,5 +95,9 @@ export class TokenService {
     //     }
 
     return { user, decoded };
-  };
+  }
+    catch (error) {
+      throw new AppError(error.message, 401);
+    }
+  }
 }
