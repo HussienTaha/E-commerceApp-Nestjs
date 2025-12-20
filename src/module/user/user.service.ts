@@ -1,5 +1,5 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { OtpRepo, UserRepo } from 'src/DB';
+import {  Injectable } from '@nestjs/common';
+import { HUserDocument, OtpRepo, UserRepo } from 'src/DB';
 import {
   confermEmailDto,
   loginDto,
@@ -19,6 +19,7 @@ import {
 } from 'src/common/service/signature';
 import { comparePassword } from 'src/common/utils/hash';
 import { AppError } from 'src/common/service/errorhanseling';
+import { S3Service } from 'src/common/service/s3.service';
 
 
 // @InjectModel(User.name) private  userModel: Model<User>
@@ -27,6 +28,7 @@ export class UserService {
   constructor(
     private readonly userRepo: UserRepo,
     private readonly otpRepo: OtpRepo,
+    private readonly s3Service: S3Service,
   ) {}
 
   private async sendOtp(userId: Types.ObjectId) {
@@ -137,4 +139,16 @@ export class UserService {
 
     return { message: 'Login successfully ❤️❤️', accessToken, refreshToken };
   }
+
+  async uploadFile(file: Express.Multer.File, user: HUserDocument) {
+
+   return this.s3Service.uploadFile({
+     file,
+
+     Path: `users/${user._id}/${file.originalname}`,
+ 
+  })
+
+  }
+      
 }

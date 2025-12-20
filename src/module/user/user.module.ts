@@ -3,13 +3,13 @@ import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 import { OtpModel, OtpRepo, UserModel, UserRepo } from "src/DB";
 import { TokenService } from "src/common/service/token";
-import { authantication, useTypeToken } from "src/common/middleware";
+import { S3Service } from "src/common/service/s3.service";
 
    
 @Module({
     imports: [UserModel ,OtpModel],
     controllers: [UserController],
-    providers: [UserService , UserRepo , OtpRepo,TokenService],
+    providers: [UserService , UserRepo , OtpRepo,TokenService, S3Service],
 })
 export class userModule {
 //  configure(consumer: MiddlewareConsumer) {

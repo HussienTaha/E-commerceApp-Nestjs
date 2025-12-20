@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { userModule } from './module/user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { BrandModule } from './module/brand/brand.module';
+
 
 
 
@@ -16,6 +18,7 @@ import { Connection } from 'mongoose';
       isGlobal: true,
     }),
     userModule,
+    BrandModule,
     MongooseModule.forRoot(process.env.MONGO_URL as string, {
       onConnectionCreate: (connection: Connection) => {
         connection.on('connected', () => console.log('connected to mongo db successfully 😎 😎'));
@@ -25,9 +28,11 @@ import { Connection } from 'mongoose';
         return connection;
       },
     }),
+  
+ 
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ],
 })
 export class AppModule {
 
