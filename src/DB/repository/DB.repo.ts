@@ -1,5 +1,6 @@
-import { DeleteResult, Model } from "mongoose";
+import { DeleteResult, Model, PopulateOptions } from "mongoose";
 import { HydratedDocument, ProjectionType, QueryOptions, RootFilterQuery, UpdateQuery, UpdateWriteOpResult } from "mongoose";
+import { PaginatedResult } from "src/common/interfaces";
 
 
       export class DBRepo< TDocument> {
@@ -57,6 +58,7 @@ async paginate({
   query,
   select,
   options,
+  populate,
 }: {
   filter: RootFilterQuery<TDocument>;
   query: {
@@ -65,36 +67,45 @@ async paginate({
   };
   select?: ProjectionType<TDocument>;
   options?: QueryOptions<TDocument>;
-}) {
- let {page,limit}=query
- 
-if (page<0){
-  page
+  populate?: PopulateOptions | PopulateOptions[];
+}): Promise<PaginatedResult<TDocument>> {
+  let { page, limit } = query;
+
+  page = Math.max(1, Number(page) || 1);
+  limit = Math.min(50, Math.max(1, Number(limit) || 10));
+
+  const skip = (page - 1) * limit;
+
+  const finalOptions: QueryOptions<TDocument> = {
+    ...options,
+    skip,
+    limit,
+  };
+
+  const count = await this.model.countDocuments(filter);
+  const numberOfPages = Math.ceil(count / limit);
+
+  const docs = await this.model
+    .find(filter, select, finalOptions)
+    .populate(populate ?? [])
+    .lean<TDocument[]>();
+
+  return {
+    docs,
+    currentPage: page,
+    count,
+    numberOfPages,
+  };
 }
-page =page * 1||1
-
-const skip=(page-1)*limit
-
-const filnaloptions={
-  ...options,
-  skip,
-  limit
-}
-
-const count = await this.model.countDocuments({deletedAt:{$exists:false}});
-const numberofpages = Math.ceil(count / limit)
-  const doc=await this.model.find(filter, select, filnaloptions);
-  return{doc , currentPage:page,count,numberofpages}
-}
 
 
-async updateone(
+async updateOne(
     filter: RootFilterQuery<TDocument>,
     update: UpdateQuery<TDocument>
   ): Promise<UpdateWriteOpResult> {
     return this.model.updateOne(filter, update);
   }
-async findOneAndupdate(
+async findOneAndUpdate(
   filter: RootFilterQuery<TDocument>,
   update: UpdateQuery<TDocument>,
   options: QueryOptions<TDocument> | null = { new: true }
@@ -104,7 +115,7 @@ async findOneAndupdate(
 
 
 
-async deleteone(
+async deleteOne(
     filter: RootFilterQuery<TDocument>,
 
   ): Promise<DeleteResult> {

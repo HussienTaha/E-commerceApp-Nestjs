@@ -13,8 +13,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { BrandService } from './brand.service';
-import { BrandQueryDto, CreateBrandDto, IdDto, updateBrandDto } from './brand.dto';
+import { CategoryService } from './category.service';
+import { CategoryQueryDto, CreateCategoryDto, IdDto, updateCategoryDto } from './category.dto';
 import { Roles, Token, TokenType, USER_ROLE, UserDecorator } from 'src/common';
 import { AuthenticationGuard } from 'src/common/guards';
 import { AuthorizationGuard } from 'src/common/guards/authorization.guard';
@@ -23,9 +23,9 @@ import { FILE_TYPES } from 'src/common/fileType';
 import { multerCloud } from 'src/common/utils/multer';
 import { Types } from 'mongoose';
 
-@Controller('brands')
-export class BrandController {
-  constructor(private readonly brandService: BrandService) {}
+@Controller('category')
+export class CategoryController {
+  constructor(private readonly CategoryService: CategoryService) {}
 
   @Token(TokenType.access)
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
@@ -39,13 +39,13 @@ export class BrandController {
     ),
   )
   @Post('/create')
-  async createBrand(
-    @Body() BrandDto: CreateBrandDto,
+  async createCategory(
+    @Body() CategoryDto: CreateCategoryDto,
     @UserDecorator() user: HUserDocument,
     @UploadedFile(ParseFilePipe) file: Express.Multer.File,
   ) {
-    const brand = await this.brandService.createBrand(BrandDto, user, file);
-    return { message: 'Brand created successfully', brand };
+    const Category = await this.CategoryService.createCategory(CategoryDto, user, file);
+    return { message: 'Category created successfully', Category };
   }
 
 
@@ -55,13 +55,13 @@ export class BrandController {
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
   @Patch('/update/:id')
-  async updateBrand(
+  async updateCategory(
     @Param() params: IdDto,
-    @Body() updateBrandDto: updateBrandDto,
+    @Body() updateCategoryDto: updateCategoryDto,
     @UserDecorator() user: HUserDocument,
   ) {
-    const brand = await this.brandService.updateBrand( params.id , updateBrandDto, user);
-    return { message: 'Brand updated successfully', brand };
+    const Category = await this.CategoryService.updateCategory( params.id , updateCategoryDto, user);
+    return { message: 'Category updated successfully', Category };
   }
 
 
@@ -77,13 +77,13 @@ export class BrandController {
     ),
   )
   @Patch('/updateImage/:id')
-  async updateBrandImage(
+  async updateCategoryImage(
     @Param() params: IdDto,
     @UserDecorator() user: HUserDocument,
      @UploadedFile(ParseFilePipe) file: Express.Multer.File,
   ) {
-    const brandImage = await this.brandService.updateBrandImage( params.id ,user, file);
-    return { message: 'Brand updated successfully', brandImage };
+    const CategoryImage = await this.CategoryService.updateCategoryImage( params.id ,user, file);
+    return { message: 'Category updated successfully', CategoryImage };
   }
 
 
@@ -97,13 +97,13 @@ export class BrandController {
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
   @Patch('/freeze/:id')
-  async freezeBrand(
+  async freezeCategory(
     @Param() params: IdDto,
     @UserDecorator() user: HUserDocument,
 
   ) {
-    const updatedBrand = await this.brandService.freezeBrand( params.id ,user);
-    return { message: 'Brand freezed successfully', updatedBrand };
+    const updatedCategory = await this.CategoryService.freezeCategory( params.id ,user);
+    return { message: 'Category freezed successfully', updatedCategory };
   }
 
 
@@ -113,27 +113,27 @@ export class BrandController {
    @UseGuards(AuthenticationGuard, AuthorizationGuard)
    @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
    @Patch('/unFreeze/:id')
-   async restoreBrand(
+   async restoreCategory(
      @Param() params: IdDto,
      @UserDecorator() user: HUserDocument,
  
    ) {
-     const updatedBrand = await this.brandService.restoreBrand( params.id ,user);
-     return { message: 'Brand unFreezed successfully', updatedBrand };
+     const updatedCategory = await this.CategoryService.restoreCategory( params.id ,user);
+     return { message: 'Category unFreezed successfully', updatedCategory };
    }
 
   
   @Token(TokenType.access)
    @UseGuards(AuthenticationGuard, AuthorizationGuard)
    @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
-   @Delete('/delete/:id')
-   async DeleteBrand(
+   @Patch('/delete/:id')
+   async DeleteCategory(
      @Param() params: IdDto,
      @UserDecorator() user: HUserDocument,
  
    ) {
-     const updatedBrand = await this.brandService.deleteBrand( params.id ,user);
-     return { message: 'Brand deleted successfully', updatedBrand };
+     const updatedCategory = await this.CategoryService.deleteCategory( params.id ,user);
+     return { message: 'Category deleted successfully', updatedCategory };
    }
 
 
@@ -143,12 +143,12 @@ export class BrandController {
    @UseGuards(AuthenticationGuard, AuthorizationGuard)
    @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
    @Get('/get/:id')
-   async getOneBrand(
+   async getOneCategory(
      @Param() params: IdDto,
  
    ) {
-     const updatedBrand = await this.brandService.getBrandById(params.id);
-     return { message: ' success to get brand  ', updatedBrand };
+     const updatedCategory = await this.CategoryService.getCategoryById(params.id);
+     return { message: ' success to get Category  ', updatedCategory };
    }
 
 
@@ -157,13 +157,31 @@ export class BrandController {
    @UseGuards(AuthenticationGuard, AuthorizationGuard)
    @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
    @Get('/getall')
-   async getAllBrand(
+   async getAllCategory(
 
-    @Query() query: BrandQueryDto,
+    @Query() query: CategoryQueryDto,
    ) {
 
-     const updatedBrand = await this.brandService.getAllBrands(query);
-     return { message: ' success to get brand successfully', updatedBrand };
+     const updatedCategory = await this.CategoryService.getAllCategories(query);
+     return { message: ' success to get Category successfully', updatedCategory };
    }
+
+
+    @Token(TokenType.access)
+   @UseGuards(AuthenticationGuard, AuthorizationGuard)
+   @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
+   @Delete('/deleteone')
+   async deleteoneCategory(
+  @Param() params: IdDto,
+    @Query() query: CategoryQueryDto,
+    @UserDecorator() user: HUserDocument,
+   ) {
+
+     const updatedCategory = await this.CategoryService.deleteCategory(params.id, user);
+     return { message: ' success to get Category successfully', updatedCategory };
+   }
+
+
+
 
 }

@@ -8,7 +8,7 @@ import slugify from 'slugify';
   toObject: { virtuals: true },
   strictQuery: true,
 })
-export class Brand {
+export class Category {
   @Prop({
     required: true,
     unique: true,
@@ -32,6 +32,9 @@ export class Brand {
   @Prop({ required: true, type: String })
   image: string;
 
+  @Prop({ type: String})
+  assetsFileUrl: string;
+
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   createdBy: Types.ObjectId;
 
@@ -49,20 +52,28 @@ export class Brand {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   updatedBy: Types.ObjectId;
 
+@Prop({ type:[Types.ObjectId], ref: 'Brand' }) 
+   brands: Types.ObjectId[];
   
   @Prop({ type: Types.ObjectId, ref: 'User' })
   deletedBy: Types.ObjectId;
 }
-export type HBrandDocument = HydratedDocument<Brand>;
+export type HCategoryDocument = HydratedDocument<Category>;
 
-const BrandSchema = SchemaFactory.createForClass(Brand);
-BrandSchema.pre([ 'findOne', 'findOneAndUpdate',], async function (next) {
-   const update = this.getUpdate() as UpdateQuery<Brand>;
+const CategorySchema = SchemaFactory.createForClass(Category);
+CategorySchema.pre([ 'findOne', 'findOneAndUpdate',], async function (next) {
+   const update = this.getUpdate() as UpdateQuery<Category>;
   if (update?.name) {
     update.slug = slugify(update.name, { replacement: '-', lower: true, trim: true });
   }
   next();
 });
-export const BrandModel = MongooseModule.forFeature([
-  { name: Brand.name, schema: BrandSchema },
+CategorySchema.virtual('subCategories', {
+  ref: 'SubCategory',
+  localField: '_id',
+  foreignField: 'categoryId',
+});
+
+export const CategoryModel = MongooseModule.forFeature([
+  { name: Category.name, schema: CategorySchema },
 ]);

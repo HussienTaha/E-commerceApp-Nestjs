@@ -1,6 +1,7 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types, UpdateAggregationStage, UpdateQuery } from 'mongoose';
+import { HydratedDocument, Types, UpdateQuery } from 'mongoose';
 import slugify from 'slugify';
+import { Category } from './category.model'; // لو في نفس الفولدر
 
 @Schema({
   timestamps: true,
@@ -8,10 +9,9 @@ import slugify from 'slugify';
   toObject: { virtuals: true },
   strictQuery: true,
 })
-export class Brand {
+export class SubCategory {
   @Prop({
     required: true,
-    unique: true,
     type: String,
     minLength: 3,
     maxLength: 30,
@@ -26,17 +26,25 @@ export class Brand {
     },
   })
   slug: string;
-    @Prop({ type: String, maxLength: 100 ,required:true , trim: true })
+
+  @Prop({ type: String, maxLength: 100, trim: true })
   slogan: string;
 
   @Prop({ required: true, type: String })
   image: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: String })
+  assetsFileUrl: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
+  categoryId: Types.ObjectId; 
+
+  @Prop({ type: Types.ObjectId, ref: 'User'  })
   createdBy: Types.ObjectId;
 
   @Prop({ type: Date })
   createdAt: Date;
+
   @Prop({ type: Date })
   restoredAt: Date;
 
@@ -49,20 +57,26 @@ export class Brand {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   updatedBy: Types.ObjectId;
 
-  
+  @Prop({ type: [Types.ObjectId], ref: 'Brand' })
+  brands: Types.ObjectId[];
+
   @Prop({ type: Types.ObjectId, ref: 'User' })
   deletedBy: Types.ObjectId;
 }
-export type HBrandDocument = HydratedDocument<Brand>;
 
-const BrandSchema = SchemaFactory.createForClass(Brand);
-BrandSchema.pre([ 'findOne', 'findOneAndUpdate',], async function (next) {
-   const update = this.getUpdate() as UpdateQuery<Brand>;
+export type HSubCategoryDocument = HydratedDocument<SubCategory>;
+
+const SubCategorySchema = SchemaFactory.createForClass(SubCategory);
+
+// تحديث الـ slug لو اتغير الاسم
+SubCategorySchema.pre(['findOne', 'findOneAndUpdate'], async function (next) {
+  const update = this.getUpdate() as UpdateQuery<SubCategory>;
   if (update?.name) {
     update.slug = slugify(update.name, { replacement: '-', lower: true, trim: true });
   }
   next();
 });
-export const BrandModel = MongooseModule.forFeature([
-  { name: Brand.name, schema: BrandSchema },
+
+export const SubCategoryModel = MongooseModule.forFeature([
+  { name: SubCategory.name, schema: SubCategorySchema },
 ]);

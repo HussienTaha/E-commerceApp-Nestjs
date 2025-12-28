@@ -1,4 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
@@ -7,11 +8,12 @@ import {
   IsMongoId,
   IsNumber,
   IsOptional,
+  Validate,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { AtlastOne } from 'src/common';
+import { AtlastOne, Idsmongo } from 'src/common';
 
-export class CreateBrandDto {
+export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
@@ -22,10 +24,15 @@ export class CreateBrandDto {
   @IsNotEmpty()
   @MaxLength(100)
   slogan: string;
+
+@Validate(Idsmongo)
+@IsOptional()
+ @Type(() => String)
+  brands : Types.ObjectId[];
 }
 
-@AtlastOne(['name', 'slogan'])
-export class updateBrandDto extends PartialType(CreateBrandDto) {}
+@AtlastOne(['name', 'slogan', 'brands'] )
+export class updateCategoryDto extends PartialType(CreateCategoryDto) {}
 
 export class IdDto {
   @IsNotEmpty()
@@ -33,7 +40,7 @@ export class IdDto {
   id: Types.ObjectId;
 }
 
-export class BrandQueryDto {
+export class CategoryQueryDto {
   @IsNumber()
   @IsOptional()
   page?: number;

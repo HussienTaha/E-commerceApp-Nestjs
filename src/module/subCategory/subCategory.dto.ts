@@ -7,11 +7,12 @@ import {
   IsMongoId,
   IsNumber,
   IsOptional,
+  Validate,
 } from 'class-validator';
 import { Types } from 'mongoose';
-import { AtlastOne } from 'src/common';
+import { AtlastOne, Idsmongo } from 'src/common';
 
-export class CreateBrandDto {
+export class CreatesubCategoryDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
@@ -22,10 +23,18 @@ export class CreateBrandDto {
   @IsNotEmpty()
   @MaxLength(100)
   slogan: string;
+
+@Validate(Idsmongo)
+@IsOptional()
+  brands : Types.ObjectId[];
+
+@IsMongoId()
+@IsOptional()
+  categoryId: Types.ObjectId;
 }
 
-@AtlastOne(['name', 'slogan'])
-export class updateBrandDto extends PartialType(CreateBrandDto) {}
+@AtlastOne(['name', 'slogan', 'brands'] )
+export class updatesubCategoryDto extends PartialType(CreatesubCategoryDto) {}
 
 export class IdDto {
   @IsNotEmpty()
@@ -33,7 +42,7 @@ export class IdDto {
   id: Types.ObjectId;
 }
 
-export class BrandQueryDto {
+export class subCategoryQueryDto {
   @IsNumber()
   @IsOptional()
   page?: number;

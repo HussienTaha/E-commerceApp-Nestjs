@@ -105,11 +105,11 @@ export class UserService {
     if (!user) throw new AppError('User not found', 404);
     if (await !compare(otp, user.otp[0].code))
       throw new AppError('Invalid Otp', 400);
-    await this.userRepo.updateone(
+    await this.userRepo.updateOne(
       { _id: user._id },
       { $set: { confermed: true } },
     );
-    await this.otpRepo.deleteone({ createdBy: user._id });
+    await this.otpRepo.deleteOne({ createdBy: user._id });
 
     return { message: 'Email confermed successfully 👌😊' };
   }
