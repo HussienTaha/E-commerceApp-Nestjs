@@ -213,6 +213,10 @@ async getAllsubCategorys(query: subCategoryQueryDto) {
         path: 'brands',       
         select: 'name  slug slogan image',  
       },
+      {
+        path: 'products',      
+        select: 'name  description mainImage subImages  slug  price stock',   
+      },
     ],
   });
 }

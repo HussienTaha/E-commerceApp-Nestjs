@@ -8,6 +8,8 @@ import { Connection } from 'mongoose';
 import { BrandModule } from './module/brand/brand.module';
 import { CategoryModule } from './module/category/category.module';
 import { subCategoryModule } from './module/subCategory/subCategory.module';
+import { ProductModule } from './module/product/product.module';
+import { CartModule } from './module/cart/cart.module';
 
 
 
@@ -23,6 +25,8 @@ import { subCategoryModule } from './module/subCategory/subCategory.module';
     BrandModule,
     CategoryModule,
     subCategoryModule,
+    ProductModule,
+    CartModule,
  
     MongooseModule.forRoot(process.env.MONGO_URL as string, {
       onConnectionCreate: (connection: Connection) => {

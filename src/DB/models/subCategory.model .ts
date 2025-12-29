@@ -37,9 +37,9 @@ export class SubCategory {
   assetsFileUrl: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
-  categoryId: Types.ObjectId; 
+  categoryId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'User'  })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;
 
   @Prop({ type: Date })
@@ -67,12 +67,20 @@ export class SubCategory {
 export type HSubCategoryDocument = HydratedDocument<SubCategory>;
 
 const SubCategorySchema = SchemaFactory.createForClass(SubCategory);
+SubCategorySchema.virtual('products', {
+  ref: 'Product',
+  localField: '_id',
+  foreignField: 'subCategoryId',
+});
 
-// تحديث الـ slug لو اتغير الاسم
 SubCategorySchema.pre(['findOne', 'findOneAndUpdate'], async function (next) {
   const update = this.getUpdate() as UpdateQuery<SubCategory>;
   if (update?.name) {
-    update.slug = slugify(update.name, { replacement: '-', lower: true, trim: true });
+    update.slug = slugify(update.name, {
+      replacement: '-',
+      lower: true,
+      trim: true,
+    });
   }
   next();
 });

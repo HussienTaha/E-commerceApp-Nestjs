@@ -215,7 +215,7 @@ import { Upload } from '@aws-sdk/lib-storage';
   await this.s3Client.send(command);
 };
 
- deletefiles = async ({
+ deleteFiles = async ({
   Bucket = process.env.AWS_BUCKET_NAME!,
   urls,
   Quite = false,
