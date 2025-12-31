@@ -10,6 +10,7 @@ import { CategoryModule } from './module/category/category.module';
 import { subCategoryModule } from './module/subCategory/subCategory.module';
 import { ProductModule } from './module/product/product.module';
 import { CartModule } from './module/cart/cart.module';
+import { CouponModule } from './module/coupon/coupon.module';
 
 
 
@@ -27,6 +28,7 @@ import { CartModule } from './module/cart/cart.module';
     subCategoryModule,
     ProductModule,
     CartModule,
+    CouponModule,
  
     MongooseModule.forRoot(process.env.MONGO_URL as string, {
       onConnectionCreate: (connection: Connection) => {

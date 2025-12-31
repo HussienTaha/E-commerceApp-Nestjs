@@ -6,7 +6,7 @@ import {
   SchemaFactory,
   Virtual,
 } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { USER_GENDER, USER_PROVIDER, USER_ROLE } from 'src/common/enum';
 import { hashPassword } from 'src/common/utils/hash';
 
@@ -64,6 +64,8 @@ export class User {
 
   @Virtual()
   otp:HOtpDocument[]
+  @Prop({ type: [Types.ObjectId], ref: 'Product' })
+  wishList: Types.ObjectId[];
 }
 
 export type HUserDocument = HydratedDocument<User>;
@@ -81,6 +83,9 @@ export const UserModel = MongooseModule.forFeatureAsync([
       UserSchema.pre('save', async function (next) {
         if (this.isModified('password')) {
           this.password = await hashPassword(this.password);
+        }
+        if (this.isModified('contact')) {
+          this.contact = await hashPassword(this.contact);
         }
         next();
       });

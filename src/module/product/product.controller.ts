@@ -174,4 +174,33 @@ export class productController {
      return { message: ' success to get product successfully', updateproduct };
    }
 
-}
+
+
+    @Token(TokenType.access)
+   @UseGuards(AuthenticationGuard, AuthorizationGuard)
+   @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
+   @Post('/addToWishList/:id')
+    async addToWishList(
+      @Param() params: IdDto,
+      @UserDecorator() user: HUserDocument,
+    ) {
+      const userExist = await this.productService.addToWishList(params.id, user);
+      return { message: 'product added to wishlist successfully',user: userExist };
+    }
+  
+  
+  
+    @Token(TokenType.access)
+   @UseGuards(AuthenticationGuard, AuthorizationGuard)
+   @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
+   @Get('/getWishList')
+    async getWishList(
+    
+      @UserDecorator() user: HUserDocument,
+    ) {
+      const userExist = await this.productService.getWishList( user);
+      return { message: 'product added to wishlist successfully',user: userExist };
+    }
+
+  }
+

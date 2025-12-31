@@ -1,6 +1,7 @@
 import { BrandRepo } from 'src/DB/repository/brand.repo';
+import { UserRepo } from 'src/DB/repository/user.repo';
 import { S3Service } from 'src/common/service/s3.service';
-import type { HUserDocument } from 'src/DB';
+import type { HUserDocument, } from 'src/DB';
 import {
   BadRequestException,
   Body,
@@ -17,11 +18,12 @@ import { AppError } from 'src/common/service/errorhanseling';
 import { Types } from 'mongoose';
 import { subCategoryRepo } from 'src/DB/repository/subCategory.repo ';
 import { ProductRepo } from 'src/DB/repository/product.repo';
-
+ 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly ProductRepo: ProductRepo,
+    private readonly userRepo: UserRepo,
     private readonly s3Service: S3Service,
     private readonly brandRepo: BrandRepo,
     private readonly CategoryRepo: CategoryRepo,
@@ -354,4 +356,55 @@ export class ProductService {
     });
     return deletedProduct;
   }
+
+async addToWishList(
+    id: Types.ObjectId,
+    user: HUserDocument,
+  ) {
+     const product = await this.ProductRepo.findOne({ _id: id });
+  if (!product) {
+    throw new BadRequestException('Product not found');
+  }
+
+  let userExist = await this.userRepo.findOneAndUpdate(
+    { _id: user._id, wishList: { $in: [id] } },
+    { $pull: { wishList: id } },
+    { new: true }
+  );
+
+  if (!userExist) {
+    userExist = await this.userRepo.findOneAndUpdate(
+      { _id: user._id },
+      { $push: { wishList: id } },
+      { new: true }
+    );
+  }
+
+  return userExist;
+  }
+  
+
+
+  async getWishList(user: HUserDocument) {
+    const userWithWishList = await this.userRepo.findOne(
+      { _id: user._id },
+      {},
+      {
+        populate: 
+          { path: 'wishList', 
+          populate: [
+            { path: 'brandId', select: 'name slug slogan image' },
+            { path: 'categoryId', select: 'name slug slogan image' },
+            { path: 'subCategoryId', select: 'name slug slogan image' },  
+          
+        ]
+      }}
+    );
+    if (!userWithWishList) {
+      throw new AppError('User not found', 404);
+    }
+    return userWithWishList;
+  }
+
+
 }

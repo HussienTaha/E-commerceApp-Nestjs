@@ -31,7 +31,7 @@ export class UserService {
     private readonly s3Service: S3Service,
   ) {}
 
-  private async sendOtp(userId: Types.ObjectId) {
+  private async sendOtp(userId: Types.ObjectId,type:OTP_ENUM=OTP_ENUM.CONFIRMEMAIL) {
     const otp = await generateOtp();
     console.log(otp);
     await this.otpRepo.create({

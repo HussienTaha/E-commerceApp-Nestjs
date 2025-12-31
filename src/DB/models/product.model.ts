@@ -82,7 +82,7 @@ discountPercentage : number;
 
   @Prop({ type: Number, default:1 })
   quantity : number;
-  @Prop({ type: Number,  })
+  @Prop({ type: Number, default:0 ,required:true })
   stock : number;
   
   @Prop({ type: Types.ObjectId, ref: 'User' })
