@@ -2,8 +2,10 @@ import {  Injectable } from '@nestjs/common';
 import { HUserDocument, OtpRepo, UserRepo } from 'src/DB';
 import {
   confermEmailDto,
+  forgetPasswordDto,
   loginDto,
   resedOtpDto,
+  resetPasswordDto,
   signupDto,
 } from './DTO/user.dto';
 import { OTP_ENUM, USER_GENDER } from 'src/common/enum';
@@ -17,7 +19,7 @@ import {
   getRoleRefreshSignature,
 
 } from 'src/common/service/signature';
-import { comparePassword } from 'src/common/utils/hash';
+import { comparePassword, hashPassword } from 'src/common/utils/hash';
 import { AppError } from 'src/common/service/errorhanseling';
 import { S3Service } from 'src/common/service/s3.service';
 
@@ -31,13 +33,13 @@ export class UserService {
     private readonly s3Service: S3Service,
   ) {}
 
-  private async sendOtp(userId: Types.ObjectId,type:OTP_ENUM=OTP_ENUM.CONFIRMEMAIL) {
+  private async sendOtp(userId: Types.ObjectId, type: OTP_ENUM = OTP_ENUM.CONFIRMEMAIL) {
     const otp = await generateOtp();
     console.log(otp);
     await this.otpRepo.create({
       code: otp.toString(),
       createdBy: userId,
-      type: OTP_ENUM.CONFIRMEMAIL,
+      type,
       expireAt: new Date(Date.now() + 5 * 60 * 1000),
     });
   }
@@ -56,7 +58,7 @@ export class UserService {
     } = Body;
 
     const userExist = await this.userRepo.findOne({ email });
-    if (userExist) throw new AppError('User already exists', 409);
+    if (userExist) throw new AppError('User already exists or not confermed', 409);
 
     const user = await this.userRepo.create({
       fName,
@@ -70,7 +72,7 @@ export class UserService {
       gender: gender ? (gender as USER_GENDER) : USER_GENDER.MALE,
     });
     await this.sendOtp(user._id);
-    return user;
+    return { message: 'User created successfully 👌😊' };
   }
 
   async resedOtp(Body: resedOtpDto) {
@@ -150,5 +152,46 @@ export class UserService {
   })
 
   }
+
+
+  // forget password
+  async forgetPassword(Body: forgetPasswordDto) {
+    const { email } = Body;
+    const user = await this.userRepo.findOne({ email, confermed: true });
+    if (!user) throw new AppError('User not found', 404);
+    await this.sendOtp(user._id , OTP_ENUM.FORGET_PASSWORD);
+    return { message: 'Otp sent successfully 👌😊' };
+    
+  }
+
+  // reset password
+  async resetPassword(Body: resetPasswordDto) {
+    const { otp, email, password } = Body;
+    const user = await this.userRepo.findOne(
+      { email, confermed: true },
+      undefined,
+      { populate: { path: 'otp' } },
+    );
+
+    const otpDoc = await this.otpRepo.findOne({
+  createdBy: user?._id,
+  type: OTP_ENUM.FORGET_PASSWORD,
+});
+if (!otpDoc) throw new AppError('Otp not found or not valid', 404);
+    
+    if (!user) throw new AppError('User not found', 404);
+    if (await !compare(otp, user.otp[0].code))
+      throw new AppError('Invalid Otp', 400);
+    const hashedPassword = await hashPassword(password);
+    await this.userRepo.updateOne(
+      { _id: user._id },
+      { $set: { password: hashedPassword } },
+    );
+    await user.save();
+    await this.otpRepo.deleteOne({ createdBy: user._id });
+    return { message: 'Password reset successfully 👌😊' };
+  }
+
+
       
 }

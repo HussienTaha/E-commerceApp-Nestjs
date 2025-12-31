@@ -1,4 +1,6 @@
-export const emailTemplet = (otp: number) => {
+import { OTP_ENUM } from "src/common/enum";
+
+export const emailTemplet = (otp: number, typeOtp:OTP_ENUM) => {
      return`<!DOCTYPE html>
                 <html>
                 <head>
@@ -34,7 +36,7 @@ export const emailTemplet = (otp: number) => {
                 </tr>
                 <tr>
                 <td>
-                <h1 style="padding-top:25px; color:#630E2B">Email Confirmation</h1>
+                <h1 style="padding-top:25px; color:#630E2B">${typeOtp}</h1>
                 </td>
                 </tr>
                 <tr>

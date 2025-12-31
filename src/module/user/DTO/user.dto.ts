@@ -96,3 +96,21 @@ gender?: USER_GENDER
 @IsMatch(["password"])
     confirmPassword: string
 }
+export class forgetPasswordDto extends resedOtpDto{
+ 
+}
+
+
+export class resetPasswordDto{
+    @IsNotEmpty({ message: 'Email is required' })
+    @IsEmail()
+    @IsString({ message: 'Email must be a string' })
+    email: string;
+    @IsNotEmpty({ message: 'Password is required' })
+    @IsString({ message: 'Password must be a string' })
+    password: string;
+    @IsNotEmpty({ message: 'Otp is required' })
+    @IsString({ message: 'Otp must be a string' })
+    @Matches(/^[0-9]{6}$/, { message: 'Otp must be a 6 number' })
+    otp: string;
+}

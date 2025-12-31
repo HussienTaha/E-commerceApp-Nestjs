@@ -25,7 +25,7 @@ export class CartService {
         stock: { $gte: quantity },
       },
       {
-        $inc: { stock: -quantity },
+        // $inc: { stock: -quantity },
       },
       {
         new: true,
@@ -98,8 +98,8 @@ export class CartService {
 
     productInCart.quantity -= 1;
 
-    productExist.stock += 1;
-    await productExist.save();
+    // productExist.stock += 1;
+    // await productExist.save();
 
     if (productInCart.quantity === 0) {
       cart.products = cart.products.filter(
@@ -117,13 +117,13 @@ export class CartService {
       throw new AppError('Cart not found', 404);
     }
 
-    for (const item of cart.products) {
-      const product = await this.productRepo.findOne({ _id: item.productId });
-      if (product) {
-        product.stock += item.quantity as number;
-        await product.save();
-      }
-    }
+    // for (const item of cart.products) {
+    //   const product = await this.productRepo.findOne({ _id: item.productId });
+    //   if (product) {
+    //     product.stock += item.quantity as number;
+    //     await product.save();
+    //   }
+    // }
     cart.products = [];
     await cart.save();
     return cart;

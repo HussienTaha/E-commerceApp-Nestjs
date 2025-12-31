@@ -27,7 +27,7 @@ OtpSchema.pre(
     this: HOtpDocument & { is_new: boolean; plainCode: string },
     next,
   ) { 
-    //  console.log({this:this});
+     console.log({this:this});
     if (this.isModified('code')) {
      this.plainCode = this.code;
       this.is_new = this.isNew;
@@ -37,15 +37,43 @@ OtpSchema.pre(
     next();
   },
 );
-OtpSchema.post('save', async function (doc, next) {
-    const that = this as  HOtpDocument & { is_new: boolean; plainCode: string }
-    if (that.is_new){
-      eventEmitter.emit('confermemail', { email: (doc.createdBy as any).email, otp:that.plainCode });
-    }
+// OtpSchema.post('save', async function (doc, next) {
+//     const that = this as  HOtpDocument & { is_new: boolean; plainCode: string }
+//     if (that.is_new){
+//       eventEmitter.emit('confermemail', { email: (doc.createdBy as any).email, otp:that.plainCode });
+//     }
 
-console.log({doc});
+// console.log({doc});
+//   next();
+// });
+
+OtpSchema.post('save', async function (doc, next) {
+  const that = this as HOtpDocument & {
+    is_new: boolean;
+    plainCode: string;
+  };
+
+  if (!that.is_new) return next();
+
+  switch (doc.type) {
+    case OTP_ENUM.CONFIRMEMAIL:
+      eventEmitter.emit('confermemail', {
+        email: (doc.createdBy as any).email,
+        otp: that.plainCode,
+      });
+      break;
+
+    case OTP_ENUM.FORGET_PASSWORD:
+      eventEmitter.emit('forgetpassword', {
+        email: (doc.createdBy as any).email,
+        otp: that.plainCode,
+      });
+      break;
+  }
+
   next();
 });
+
 
 export type HOtpDocument = HydratedDocument<Otp>;
 export const OtpModel = MongooseModule.forFeature([

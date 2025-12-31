@@ -14,8 +14,10 @@ import  {
 import { UserService } from './user.service';
 import {
   confermEmailDto,
+  forgetPasswordDto,
   loginDto,
   resedOtpDto,
+  resetPasswordDto,
   signupDto,
 } from './DTO/user.dto';
 import { AuthenticationGuard } from 'src/common/guards';
@@ -66,6 +68,27 @@ export class UserController {
     return { message: 'profile', user };
     // return this.userService.profile();
   }
+
+    @Token(TokenType.access)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
+  @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
+  @Post('/forgetPassword')
+ async forgetPassword( @Body() Body: forgetPasswordDto,  @UserDecorator() user: HUserDocument) {
+    await this.userService.forgetPassword(Body);
+    return { message: '  otp send successfully '};
+    // return this.userService.profile();
+  }
+
+      @Token(TokenType.access)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
+  @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
+  @Patch('/resetPassword')
+ async resetPassword( @Body() Body: resetPasswordDto,  @UserDecorator() user: HUserDocument) {
+    await this.userService.resetPassword(Body);
+    return { message: '   password  reset successfully '};
+    // return this.userService.profile();
+  }
+
  @Token(TokenType.access)
   @UseGuards(AuthenticationGuard, AuthorizationGuard)
   @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
