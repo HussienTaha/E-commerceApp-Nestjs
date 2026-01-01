@@ -96,6 +96,65 @@ gender?: USER_GENDER
 @IsMatch(["password"])
     confirmPassword: string
 }
+
+
+
+
+
+
+export class updateUser extends  resedOtpDto{
+    @Length(3 , 20 ,{ message: 'Name must be at least 3 characters long' })
+    @IsNotEmpty({ message: 'Name is required' })
+    @IsString({ message: 'Name must be a string' })
+    @ValidateIf((data:signupDto)=>{
+        return Boolean (!data.userName)
+    })
+    fName: string;
+
+
+
+    @Length(3 , 20 ,{ message: 'Name must be at least 3 characters long' })
+    @IsNotEmpty({ message: 'Name is required' })
+    @IsString({ message: 'Name must be a string' })
+    @ValidateIf((data:signupDto)=>{
+        return Boolean (!data.userName)
+    })
+    lName: string;
+
+
+    @Length(3 , 20 ,{ message: 'Name must be at least 3 characters long' })
+    @IsNotEmpty({ message: 'Name is required' })
+    @IsString({ message: 'Name must be a string' })
+    @ValidateIf((data:signupDto)=>{
+        return Boolean (!data.fName && !data.lName)
+    })
+userName: string
+
+ 
+
+    @IsNotEmpty()
+    @IsString()
+   @Matches(/^01[0-2,5]{1}[0-9]{8}$/, {
+  message: 'Invalid Egyptian phone number',
+})
+ contact: string;
+
+    @IsNotEmpty()
+    @IsString()
+    address: string
+
+
+@IsEnum(USER_GENDER)
+@IsOptional()
+gender?: USER_GENDER
+
+@IsNotEmpty()
+    @Min(10)
+    @Max(100)
+    @IsNumber()
+     age : number;
+
+}
 export class forgetPasswordDto extends resedOtpDto{
  
 }

@@ -1,4 +1,4 @@
-import { DeleteResult, Model, PopulateOptions } from "mongoose";
+import { DeleteResult, FilterQuery, Model, PopulateOptions } from "mongoose";
 import { HydratedDocument, ProjectionType, QueryOptions, RootFilterQuery, UpdateQuery, UpdateWriteOpResult } from "mongoose";
 import { PaginatedResult } from "src/common/interfaces";
 
@@ -122,5 +122,7 @@ async deleteOne(
     return this.model.deleteOne(filter);
   }
 
-
+  async deleteMany(filter: FilterQuery<TDocument>): Promise<DeleteResult> {
+    return this.model.deleteMany(filter);
+  }
       }

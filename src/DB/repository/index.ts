@@ -5,6 +5,7 @@ export * from "./category.repo"
 export * from "./brand.repo";
 export * from "./coupon.repo"
 export * from "./order.repo"
+export *from "./RevokedToken.repo"
 
 
 

@@ -36,4 +36,16 @@ export const UserDecorator = createParamDecorator(
     const request = ctx.switchToHttp().getRequest();
     return request.user;
   },
+
+
+  
+);
+export const TokenDecorator = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.decoded;
+  },
+
+
+  
 );

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CategoryController } from './category.controller';
 
 
-import { BrandModel, CategoryModel, CategoryRepo, UserModel, UserRepo } from 'src/DB';
+import { BrandModel, CategoryModel, CategoryRepo, RevokedTokenModel, RevokedTokenRepo, UserModel, UserRepo } from 'src/DB';
 
 import { BrandRepo } from 'src/DB/repository/brand.repo';
 import { S3Service } from 'src/common/service/s3.service';
@@ -12,8 +12,8 @@ import { BrandService } from '../brand/brand.service';
 import { CategoryService } from './category.service';
 
 @Module({
-  imports: [UserModel,BrandModel,CategoryModel],
+  imports: [UserModel,BrandModel,CategoryModel,RevokedTokenModel],
   controllers: [CategoryController],
-  providers: [BrandService ,UserRepo,BrandRepo,S3Service,TokenService, CategoryRepo,CategoryService ]
+  providers: [BrandService ,UserRepo,BrandRepo,S3Service,TokenService, CategoryRepo,CategoryService,RevokedTokenRepo ]
 })
 export class CategoryModule {}

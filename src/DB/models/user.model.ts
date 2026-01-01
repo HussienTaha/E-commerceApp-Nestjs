@@ -62,6 +62,17 @@ export class User {
   @Prop({ type: Date, default: Date.now })
   changeCredentialsAT: Date;
 
+  @Prop({ type: Date, default: Date.now })
+  changecredentials:Date
+@Prop({ type: String})
+ image : string
+ 
+@Prop({ type: Date})
+ deletedAt:Date
+
+@Prop({ type: Date})
+ resortedAt : Date
+
   @Virtual()
   otp:HOtpDocument[]
   @Prop({ type: [Types.ObjectId], ref: 'Product' })

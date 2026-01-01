@@ -1,10 +1,12 @@
+
 import { TokenType } from 'src/common/enum';
 
 import jwt, { JwtPayload, sign, SignOptions } from 'jsonwebtoken';
 import { AppError } from '../errorhanseling';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { HUserDocument, User } from 'src/DB';
+import { HUserDocument, RevokedToken, User } from 'src/DB';
+import { RevokedTokenRepo } from 'src/DB/repository/RevokedToken.repo';
 
 export const generateToken = async ({
   payload,
@@ -30,8 +32,13 @@ const verifyToken = async ({
 
 export class TokenService {
   constructor(
+
     @InjectModel(User.name)
     private readonly userRepo: Model<HUserDocument>,
+
+    @InjectModel(RevokedToken.name)
+    private readonly revokedTokenRepo: Model<RevokedToken>,
+   
   ) {}
 
   getsegnature = async (
@@ -86,13 +93,13 @@ export class TokenService {
       throw new AppError('User not confirmed or is deleted', 401);
     }
 
-    //     if (await _revokedModel.findOne({tokenId:decoded.jti})){
-    //         throw new AppError("Token is revoked",401)
-    //     }
-    //      if(user?.changecredentials?.getDate()!>decoded?.iat!*1000){
-    // throw new AppError("User change credentials and token is expired or is revoked",401)
+        if (await this.revokedTokenRepo.findOne({tokenId:decoded.jti})){
+            throw new AppError("Token is revoked",401)
+        }
+         if(user?.changecredentials?.getDate()!>decoded?.iat!*1000){
+    throw new AppError("User change credentials and token is expired or is revoked",401)
 
-    //     }
+        }
 
     return { user, decoded };
   }
