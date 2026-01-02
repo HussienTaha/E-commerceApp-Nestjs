@@ -306,4 +306,28 @@ export class UserService {
     return { message: 'User updated successfully 👌😊', updatedUser };
   }
 
+
+
+
+    async refreshToken( user: HUserDocument) {
+    
+   
+    const accessSignature = getRoleAccessSignature(user?.role);
+    const refreshSignature = getRoleRefreshSignature(user?.role);
+    console.log(accessSignature, refreshSignature);
+    const jwtid = uuidv4();
+    const accessToken = await generateToken({
+      payload: { userId: user._id, role: user.role, email: user.email },
+      signature: accessSignature,
+      options: { expiresIn: '1y', jwtid },
+    });
+    const refreshToken = await generateToken({
+      payload: { userId: user._id, role: user.role, email: user.email },
+      signature: refreshSignature,
+      options: { expiresIn: '1y', jwtid },
+    });
+
+    return { message: 'Login successfully ❤️❤️', accessToken, refreshToken };
+  }
+
 }

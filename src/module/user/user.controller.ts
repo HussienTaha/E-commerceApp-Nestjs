@@ -174,4 +174,16 @@ export class UserController {
   
   }
 
+
+
+  @Token(TokenType.refresh)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
+  @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
+  @Post('/refreshToken')
+  async refreshToken(@UserDecorator() user: HUserDocument) {
+    const res =  await this.userService.refreshToken(user);
+    return { message: ' get refreshToken  successfully 👌😊',res };
+  
+  }
+
 }

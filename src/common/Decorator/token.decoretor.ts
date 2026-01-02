@@ -8,3 +8,4 @@ export const Token = (tokentype: TokenType = TokenType.access) => {
 export const ROLES_KEY = 'access_roles';
 
 export const Roles = (...roles: USER_ROLE[]) => SetMetadata(ROLES_KEY, roles);
+ 
