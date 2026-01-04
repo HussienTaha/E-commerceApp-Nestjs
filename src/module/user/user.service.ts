@@ -330,4 +330,12 @@ export class UserService {
     return { message: 'Login successfully ❤️❤️', accessToken, refreshToken };
   }
 
+
+   async deleteUser(id: Types.ObjectId) {
+    const userExists = await this.userRepo.findOne({ _id: id });
+    if (!userExists) throw new AppError('User not found', 404);
+    const deletedUser = await this.userRepo.deleteOne({ _id: id });
+    return { message: 'User deleted successfully 👌😊', deletedUser };
+  }
+
 }

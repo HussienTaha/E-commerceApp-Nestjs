@@ -6,10 +6,11 @@ import { OrderController } from './oeder.controller';
 import { OrderService } from './order.service';
 import { CartRepo } from 'src/DB/repository/cart.repo';
 import { ProductRepo } from 'src/DB/repository/product.repo';
+import { StripeService } from 'src/common/service/stripe.service';
 
 @Module({
   imports: [UserModel,OrderModel,CouponModel,CartModel ,ProductModel,RevokedTokenModel],
   controllers: [OrderController],
-  providers: [OrderService ,UserRepo,CouponRepo,S3Service,TokenService,OrderRepo,CartRepo ,ProductRepo,RevokedTokenRepo ]
+  providers: [OrderService ,UserRepo,CouponRepo,S3Service,TokenService,OrderRepo,CartRepo ,ProductRepo,RevokedTokenRepo ,StripeService]
 })
 export class OrderModule {}

@@ -44,7 +44,7 @@ export class Order {
   @Prop({ type: String, enum: OrderStatusEnum, required: true, default: OrderStatusEnum.PENDING })
   orderStatus: OrderStatusEnum
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, })
    paymentIntent: string;
   @Prop({ type: {paidAt : Date,
     deliveredAt : Date,

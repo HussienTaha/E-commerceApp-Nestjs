@@ -64,6 +64,12 @@ export class Cart {
 export type HCartDocument = HydratedDocument<Cart>;
 
 const CartSchema = SchemaFactory.createForClass(Cart);
+// CartSchema.virtual('productsDetails', {
+//   ref: 'Product',
+//   localField: 'products.productId',  // جوا الـ array
+//   foreignField: '_id',
+//   justOne: false,
+// });
 
  CartSchema.pre('save', async function (next) {
    this.subTotal = this.products.reduce((total, product) => total + (product.finalPrice * product.quantity), 0);

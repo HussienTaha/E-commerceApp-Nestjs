@@ -42,4 +42,32 @@ export class OrderController {
     return { message: 'Order  canceled successfully  ',   order };
   }
 
+  @Token(TokenType.access)
+  @UseGuards(AuthenticationGuard, AuthorizationGuard)
+  @Roles(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER)
+  @Post('/stripe/:id')
+
+  async paymentWithStripe(
+    @Param() Params: IdDto,
+    @UserDecorator() user: HUserDocument,
+  ) {
+    const order = await this.OrderService.paymentWithStripe( Params.id, user);
+    return { message: ' done  ',   order };
+  }
+
+
+  @Post('/webhook')
+
+  async webhook(
+  
+    @Body () body:any
+  ) {
+
+
+     const order = await this.OrderService.webhook(body);
+     return { message: ' done  ',   order };
+    
+  
+  }
+
 }
