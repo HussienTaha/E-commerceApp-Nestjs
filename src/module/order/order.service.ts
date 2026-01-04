@@ -210,7 +210,7 @@ export class OrderService {
       customer_email: user.email,
     });
 
-return {session}
+return {session, order}
 
   }
 
@@ -218,7 +218,7 @@ return {session}
 
     async webhook(body: any) {
     try {
-        const paymentIntent = body.data.object.payment_intent;
+   
       const orderId = body.data.object.metadata.orderId;
 
       const order = await this.orderRepo.findOneAndUpdate(
@@ -228,7 +228,7 @@ return {session}
           orderChanges: {
             paidAt: new Date(),
           },
-          paymentIntent
+          paymentIntent: body.data.object.payment_intent,
         },
         { new: true } 
       );
